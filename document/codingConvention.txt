@@ -1,0 +1,18 @@
+We use the following conventions throughout the code
+
+1. image path for a scenery spot "A":  /data/spots/images/A/ (format of pictures fixed ".png")
+    There's API query the number files in the folder, for example 6 (must be even, since there are small pics and large pics)
+    small pics: 1.png,  2.png, 3.png
+    large pics: 1_big.png, 2_big.png, 3_big.png
+
+    This applies to all images for all scenery spot.
+
+2. content path for a scenery spot "A": /data/spots/content/A/
+    There should be only one file in the folder:  content.txt
+
+3. static url for a scenery spot "A"  /data/staticUrl/spots/A.html
+
+1.  Route is the schedule unit.  If A->B->C (customers don’t change bus) then it is one route. But if A->B->C and customers can change bus, then it is 2 routes (A->B and B->C)
+2. We may want to change routeid to string. Currently I use startSpotid + 0 + endSpotid as routeid. If A->B->C then routeid = Aid + Bid + Cid.
+3. If A->B is 101, B->A is 100101 (100 as prefix)
+4. If routeid = 102,  1020 is the full price offer, 1021 is the half price offer and 1022 is the bus-ticket only offer.

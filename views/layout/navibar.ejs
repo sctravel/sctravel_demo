@@ -1,0 +1,59 @@
+<!-- Navbar
+ ================================================== -->
+<script>
+(function() {
+  if (!window.console) {
+    window.console = {};
+  }
+  // union of Chrome, FF, IE, and Safari console methods
+  var m = [
+    "log", "info", "warn", "error", "debug", "trace", "dir", "group",
+    "groupCollapsed", "groupEnd", "time", "timeEnd", "profile", "profileEnd",
+    "dirxml", "assert", "count", "markTimeline", "timeStamp", "clear"
+  ];
+  // define undefined methods as noops to prevent errors
+  for (var i = 0; i < m.length; i++) {
+    if (!window.console[m[i]]) {
+      window.console[m[i]] = function() {};
+    }    
+  } 
+})();
+</script>
+ <div class="navbar navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="/">成都旅游网</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                    <li>
+                        <a href="/">主页</a>
+                    </li>
+                    <li>
+                        <a href="/customerTools">订单查询</a>
+                    </li>
+                    <li>
+                        <a href="/sctravel/about.html">关于我们</a>
+                    </li>
+                    <li>
+                        <a href="/sctravel/contact.html">联系我们</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Subhead
+ ================================================== -->
+<header class="jumbotron subhead" id="overview">
+    <div class="container">
+        <h1>成都旅游网</h1>
+        <p class="lead">天府之国，美食家园，吃货天堂</p>
+    </div>
+</header>

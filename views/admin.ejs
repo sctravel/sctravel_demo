@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+<%include layout/bootstrap.ejs%>
+<%include layout/jqGridInclude.ejs%>
+
+
+</head>
+<body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
+
+<% include layout/navibar.ejs%>
+
+<div class="container" >
+    <!-- Menu -->
+    <div class = "row">
+
+        <div style="float:right;">
+            <font size="2">你好，<b><%= username %></b>! 欢迎登陆!</font>
+            <button id="logout">注销登陆</button>
+
+        </div>
+
+
+        <div class="navbar adminpage">
+            <div class="navbar-inner">
+                <div class="container">
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li>
+                                <a id="spotsManagement">景点管理</a>
+                            </li>
+                            <li>
+                                <a id="routesManagement">路线管理</a>
+                            </li>
+                            <li>
+                                <a id="offersManagement">套餐管理</a>
+                            </li>
+                            <li>
+                                <a id="schedulesManagement">日程管理</a>
+                            </li>
+
+                            <li class="dropdown">
+                                <a id="one-ddheader" onmouseover="ddMenu('one',1)" onmouseout="ddMenu('one',-1)">订单管理</a>
+                                <dd id="one-ddcontent" onmouseover="cancelHide('one')" onmouseout="ddMenu('one',-1)">
+                                    <ul>
+                                        <li><a href="#" >增加订单</a></li>
+                                        <li><a href="#" >删除订单</a></li>
+                                    </ul>
+                                </dd>
+                            </li>
+
+                            <li>
+                                <a id="permissionManagement">用户权限管理</a>
+                            </li>
+                            <li>
+                                <a id="userManagement">用户账号管理</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div >
+            <!-- Menu -->
+            <section class="span8">
+
+                <div id = "content"></div>
+
+            </section>
+            <section id="blank2"  class = "span1"></section>
+        </div>
+
+    </div>
+
+    <script>
+
+
+        var DDSPEED = 10;
+        var DDTIMER = 15;
+
+        // main function to handle the mouse events //
+        function ddMenu(id,d){
+            var h = document.getElementById(id + '-ddheader');
+            var c = document.getElementById(id + '-ddcontent');
+            clearInterval(c.timer);
+            if(d == 1){
+                clearTimeout(h.timer);
+                if(c.maxh && c.maxh <= c.offsetHeight){return}
+                else if(!c.maxh){
+                    c.style.display = 'block';
+                    c.style.height = 'auto';
+                    c.maxh = c.offsetHeight;
+                    c.style.height = '0px';
+                }
+                c.timer = setInterval(function(){ddSlide(c,1)},DDTIMER);
+            }else{
+                h.timer = setTimeout(function(){ddCollapse(c)},50);
+            }
+        }
+
+        // collapse the menu //
+        function ddCollapse(c){
+            c.timer = setInterval(function(){ddSlide(c,-1)},DDTIMER);
+        }
+
+        // cancel the collapse if a user rolls over the dropdown //
+        function cancelHide(id){
+            var h = document.getElementById(id + '-ddheader');
+            var c = document.getElementById(id + '-ddcontent');
+            clearTimeout(h.timer);
+            clearInterval(c.timer);
+            if(c.offsetHeight < c.maxh){
+                c.timer = setInterval(function(){ddSlide(c,1)},DDTIMER);
+            }
+        }
+
+        // incrementally expand/contract the dropdown and change the opacity //
+        function ddSlide(c,d){
+            var currh = c.offsetHeight;
+            var dist;
+            if(d == 1){
+                dist = (Math.round((c.maxh - currh) / DDSPEED));
+            }else{
+                dist = (Math.round(currh / DDSPEED));
+            }
+            if(dist <= 1 && d == 1){
+                dist = 1;
+            }
+            c.style.height = currh + (dist * d) + 'px';
+            c.style.opacity = currh / c.maxh;
+            c.style.filter = 'alpha(opacity=' + (currh * 100 / c.maxh) + ')';
+            if((currh < 2 && d != 1) || (currh > (c.maxh - 2) && d == 1)){
+                clearInterval(c.timer);
+            }
+        }
+
+        var toolIds=[];
+
+        $(function(){
+            $("#menu").menu();
+            username = "<%= username %>";
+            randomKey = "<%= randomKey %>";
+
+            //show the tools that the user has permission to view
+            $.get("/services/admin/toolIdsByAdminUser/"+username,function(results){
+
+                for(var i in results) {
+                    $('#'+results[i].tool_id).show();
+                }
+
+            });
+            console.log(username);
+
+
+        })
+
+
+        function showMenu(){
+            document.getElementById("ordersManagement").style.display="block";
+        }
+        function hideMenu(){
+            document.getElementById("ordersManagement").style.display="none";
+        }
+
+        $("#logout").click( function(){
+            window.location.href=("/logout");
+        });
+
+        $("#spotsManagement").click( function(){
+            $('#content').load("queryspots");
+        });
+
+        $("#routesManagement").click( function(){
+            $('#content').load("queryroutes");
+        });
+
+        $("#offersManagement").click( function(){
+            $('#content').load("queryoffers");
+        });
+
+        $("#ordersManagement").click( function(){
+            $('#content').load("queryorders");
+        });
+        $("#addOrders").click( function(){
+            $('#content').load("adminPlaceOrders");
+        });
+
+
+        $("#permissionManagement").click( function(){
+            $('#content').load("toolPermission");
+        });
+
+        $("#userManagement").click( function(){
+            $('#content').load("adminUserManagement");
+        });
+        /*
+        */
+
+
+    </script>
+
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="/assets/js/jquery-1.9.1.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/holder.js"></script>
+    <script src="/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script src="/assets/js/docs.js"></script>
+    <script src="/sctravel/grid.locale-en.js" type="text/javascript"></script>
+    <script src="/sctravel/jquery.jqGrid.min.js" type="text/javascript"></script>
+</body>
+</html>

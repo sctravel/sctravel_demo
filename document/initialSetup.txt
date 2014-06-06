@@ -1,0 +1,26 @@
+1. Download Github, NodeJs, WebStorm(IDE) and MySQL (optional: MySQL Workbench)
+
+2. Check out the code from our github reps
+
+    >/  git clone https://github.com/sctravel/scTravel_staging.git
+
+3. Setup MySQL and Create a database named "sctravel"
+  (best with the username: root, and use the password in node_modules/createDBConnectionPool.js file,
+    otherwise, you need to modify your mysql root password when you are testing locally)
+
+4. Go to node_modules directory.
+    >/ cd node_modules
+
+   Run two scripts (createTables.js and loadDataToTables.js) to create the tables and load the data into the tables
+
+   >/ node createTables.js
+
+   >/ node loadDataToTables.js
+
+5. Back to the project directory and start service.
+
+   >/ cd ..
+   >/ node app.js
+
+6. Finally you can see the website on
+    http://localhost:3000

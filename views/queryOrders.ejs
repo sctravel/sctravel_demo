@@ -1,0 +1,351 @@
+<html lang="cn">
+<head>
+    <%include layout/bootstrap.ejs%>
+    <%include layout/jqGridInclude.ejs%>
+    <script src="/assets/js/jquery.jqGrid-4.6.0/src/grid.subgrid.js" type="text/javascript"></script>
+    <script src="/sctravel/messageReporter.js" type="text/javascript"></script>
+
+</head>
+
+<body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
+
+
+
+<div id = "orderSearch" class="container">
+
+    <div class="row-fluid order" >
+        <div  class="span2"><bold>请选择操作：</bold>
+            <select id="customerToolOrderSearchSelect" class="start" style="width:140px;">
+                <option value = 0>根据确认码查询</option>
+                <option value = 1>根据用户姓名信息</option>
+                <option value = 2>根据用户手机信息</option>
+                <option value = 3>根据订单号信息</option>
+            </select>
+        </div>
+    </div>
+
+    <section id="orderSearchByCustomerName">
+        <div class="page-header">
+            <b>请输入您的姓名: </b>
+        </div>
+        <form  class="well form-inline">
+            <div class="row-fluid userInfo" >
+                <div  class="span2"><bold>姓名：</bold><input id="name"  type="text" class="amount input-small" /></div>
+            </div>
+        </form>
+        <div class="row-fluid" >
+            <div ><button id="searchOrderByCustomerName">查询</button></div>
+        </div>
+    </section>
+
+    <section id="orderSearchByCustomerPhone">
+        <div class="page-header">
+            <b>请输入您的手机号码: </b>
+        </div>
+        <form  class="well form-inline">
+            <div class="row-fluid userInfo" >
+                <div  class="span2"><bold>联系电话：</bold><input id="phone"  type="text" class="amount input-small" /></div>
+            </div>
+        </form>
+        <div class="row-fluid" >
+            <div ><button id="searchOrderByCustomerPhone">查询</button></div>
+        </div>
+    </section>
+
+    <section id="orderSearchByConfirmCode">
+        <div class="page-header">
+            <b>请输入您的确认码: </b>
+        </div>
+        <form  class="well form-inline">
+            <div class="row-fluid userInfo" >
+                <div  class="span2"><bold>确认码：</bold><input id="confirmCode"  type="text" class="amount input-small" /></div>
+            </div>
+        </form>
+        <div class="row-fluid" >
+            <div ><button id="searchOrderByConfirmCode">查询</button></div>
+        </div>
+
+    </section>
+
+    <div id="queryOrderReporter"></div>
+
+
+    <section id="orderSearchByOrderId">
+        <div class="page-header">
+            <b>请输入订单号: </b>
+        </div>
+        <form  class="well form-inline">
+            <div class="row-fluid userInfo" >
+                <div  class="span2"><bold>订单号：</bold><input id="orderId"  type="text" class="amount input-small" /></div>
+            </div>
+        </form>
+        <div class="row-fluid" >
+            <div ><button id="searchOrderByOrderId">查询</button></div>
+        </div>
+
+    </section>
+</div>
+
+
+<section id="searchResultsPage">
+    <div class="page-header">
+        <h1>订单查询结果：</h1>
+    </div>
+    <div class="row-fluid order" >
+        <table id="orderSearchResult"></table>
+    </div>
+    <br />
+</section>
+
+
+<script>
+    var reporter = new MessageReporter("queryOrderReporter");
+    var displayOrder = function(data){
+        searchResults=data;
+        console.dir(searchResults);
+        jQuery("#orderSearchResult").GridUnload();
+        jQuery("#orderSearchResult").jqGrid({
+            data: searchResults,
+            datatype: "local",
+            colNames:['订单号','下单时间','客户姓名','客户手机','客户邮箱','总金额','确认码','支付状态','创建者','取消订单'],
+            colModel:[  {name:'order_id',index:'order_id',align:'right',width:160},
+                {name:'order_datetime',index:'order_datetime', align:"right",formatter:dateDisplayFormatter},
+                {name:'customer_name',index:'customer_name', align:"right",width:100},
+                {name:'mobile_phone',index:'mobile_phone', align:"right"},
+                {name:'email',index:'email', align:"right",width:200},
+                {name:'total_order_amount',index:'total_order_amount', align:"right",width:60},
+                {name:'confirmation_code',index:'confirmation_code', align:"right"},
+                {name:'order_status',index:'order_status', align:"right", formatter: orderStatusFormatter,width:80},
+                {name:'created_by',index:'created_by', align:"right",width:80},
+                {name: 'is_valid', index: 'is_valid', formatter: "is_valid",
+                    formatoptions: {disabled: false},
+                    editable: true, edittype: 'checkbox', cellEdit: true, sortable: false,
+                    editoptions: { value: "1:0", defaultValue: 0 }}
+            ],
+
+            gridComplete: function(){ var ids = jQuery("#orderSearchResult").jqGrid('getRowData');
+                for(var i=0;i < ids.length;i++){
+                    var data = ids[i];
+                    console.dir(data);
+                    if(data.order_status == '未付款') {
+                        console.log("status is Booked");
+
+                        var ce = "<input style='height:22px;width:80px;background-color:#ff0000' id=" + data.order_id+ " type='button' value='取消' />" ;
+                        jQuery("#orderSearchResult").jqGrid('setRowData',(i+1)+"",{is_valid:ce});
+
+                        $('#'+data.order_id).click(function(){
+                            $.post('/services/orders/cancel',{orderId:data.order_id},function(results){
+                                if(results=="done") {
+                                    reporter.successStatus("您已经成功取消了一个订单，订单号为:"+data.order_id);
+                                    reporter.render();
+
+                                    if($('#name').val() && $('#name').val().length>1 ) {
+                                        searchByCustomerName();
+                                    } else if($('#phone').val() && $('#phone').val().length>1) {
+                                        searchByPhone();
+                                    } else if($('#orderId').val() && $('#orderId').val().length>1) {
+                                        searchByOrderId();
+                                    } else if($('#confirmCode').val() && $('#confirmCode').val().length>1) {
+                                        searchByConfirmCode();
+                                    }
+
+                                } else {
+                                    reporter.errorStatus("取消订单出现问题,请重试或者联系管理员.");
+                                    reporter.render();
+                                    //TODO deal with the edit failed case
+                                }
+                            });
+                        });
+
+                    } else {
+                        var ce = "<input style='height:22px;width:80px; background-color: yellow' id=" + data.order_id+ "  value="+data.order_status+" />" ;
+                        jQuery("#orderSearchResult").jqGrid('setRowData',(i+1)+"",{is_valid:ce});
+                    }
+                }},
+
+            shrikToFit: true,
+            subGrid: true,  // (1)开启子表格支持
+            subGridRowExpanded: function(subgrid_id, row_id) {
+                var orderId = jQuery("#orderSearchResult").jqGrid('getRowData',row_id).order_id;
+
+                $.get('/services/search/orders', {"orderId" : orderId}, function(data){
+                    console.log('getting data from orderId');
+                    console.dir(data);
+                    var subgrid_table_id;
+                    subgrid_table_id = subgrid_id + "_t";   //
+                    var subgrid_pager_id;
+                    subgrid_pager_id = subgrid_id + "_pgr"  //
+                    $("#" + subgrid_id).html("<table id='"+subgrid_table_id+"'class='scroll'></table><div id='"+subgrid_pager_id+"'class='scroll'></div>");
+                    $("#" + subgrid_table_id).jqGrid({
+                        data: data,
+                        datatype: "local",
+                        colNames:['出发地','景点','套餐名','日期','时间','人数','价格'],
+                        colModel:[
+                            {name:'depart_spot_name',index:'depart_spot_name',align:'right',sortable:false,width:120},
+                            {name:'to_label',index:'to_label', align:"right",sortable:false,width:100},
+                            {name:'offer_name', index:'offer_name', align:"right" ,sortable:false,width:300},
+                            {name:'valid_date',index:'valid_date', align:"right", formatter:dateDisplayFormatter,width:130},
+                            {name:'departure_time',index:'departure_time', align:"right",sortable:false,width:60},
+                            {name:'quantity',index:'quantity', align:"right",sortable:false,width:40},
+                            {name:'offer_subtotal_amount',index:'offer_subtotal_amount', align:"right",sortable:false,width:40},
+
+                        ],
+                        prmNames: {search: "search"},
+                        pager: subgrid_pager_id,
+                        viewrecords: true,
+                        height: "100%",
+                        rowNum: 5
+                    });
+                });
+
+            },
+
+            caption: "您的订单：",
+            //rowNum:10,
+            //pager:$('#pager2'),
+            loadonce:false,
+            width:1200,
+            height: "100%"
+        });
+    };
+
+    $('#customerToolOrderSearchSelect').change(function(){
+
+        reporter.clear();
+        var selectedOption = $( this ).val();
+        $('#searchResultsPage').hide();
+
+        if(selectedOption == 0 ) { //based on ConfirmCode
+            $('#orderSearchByConfirmCode').show();
+            $('#orderSearchByCustomerPhone').hide();
+            $('#orderSearchByCustomerName').hide();
+            $('#orderSearchByOrderId').hide();
+
+
+
+        } else if(selectedOption == 1 ) { //based on Customer Name
+            $('#orderSearchByCustomerName').show();
+            $('#orderSearchByCustomerPhone').hide();
+            $('#orderSearchByConfirmCode').hide();
+            $('#orderSearchByOrderId').hide();
+
+        } else if (selectedOption == 2){ //based on Customer Phone
+            $('#orderSearchByCustomerPhone').show();
+            $('#orderSearchByCustomerName').hide();
+            $('#orderSearchByConfirmCode').hide();
+            $('#orderSearchByOrderId').hide();
+        }
+
+        else if (selectedOption == 3){ //based on Customer Phone
+            $('#orderSearchByOrderId').show();
+            $('#orderSearchByCustomerPhone').hide();
+            $('#orderSearchByCustomerName').hide();
+            $('#orderSearchByConfirmCode').hide();
+
+        }
+    });
+
+    function searchByCustomerName() {
+        reporter.clear();
+
+        var customerName = $('#name').val();
+        if(!customerName || customerName.length==0) {
+            reporter.errorStatus("请输入您要查询的用户名");
+            reporter.render();
+        }
+
+        $('#phone').val('');
+        $('#orderId').val('');
+        $('#confirmCode').val('');
+        console.log("Search orders by customer name");
+        jQuery("#orderSearchResult").empty();
+        $('#searchResultsPage').show();
+        $.get('/services/admin/GetOrdersBasedOnName/'+customerName,  displayOrder);
+    }
+
+    $('#searchOrderByCustomerName').click(searchByCustomerName);
+
+
+    function searchByPhone() {
+        reporter.clear();
+
+        var phone = $('#phone').val();
+        if(!phone || phone.length<10) {
+            reporter.errorStatus("请输入您要查询的电话号码");
+            reporter.render();
+        }
+        $('#name').val('');
+        $('#orderId').val('');
+        $('#confirmCode').val('');
+        console.log("Search orders by customer mobile phone");
+        jQuery("#orderSearchResult").empty();
+        $('#searchResultsPage').show();
+        $.get('/services/admin/GetOrderBasedOnPhoneNumber/'+phone,  displayOrder);
+    }
+    $('#searchOrderByCustomerPhone').click(searchByPhone);
+
+    function searchByConfirmCode() {
+        reporter.clear();
+
+        var confirmCode = $('#confirmCode').val();
+        if(!confirmCode || confirmCode.length!=10) {
+            reporter.errorStatus("请输入正确的确认码");
+            reporter.render();
+        }
+
+        $('#name').val('');
+        $('#phone').val('');
+        $('#orderId').val('');
+        console.log("Search orders by confirmCOde");
+        jQuery("#orderSearchResult").empty();
+        $('#searchResultsPage').show();
+        $.get('/services/admin/GetCustomersBasedOnConfirmation/'+confirmCode, displayOrder);
+    }
+
+    $('#searchOrderByConfirmCode').click(searchByConfirmCode);
+
+    function searchByOrderId() {
+        reporter.clear();
+
+        var orderId = $('#orderId').val();
+        if(!orderId || orderId.length <15) {
+            reporter.errorStatus("请输入正确的订单号");
+            reporter.render();
+        }
+
+        $('#name').val('');
+        $('#phone').val('');
+        $('#confirmCode').val('');
+        console.log("Search orders by OrderId");
+        jQuery("#orderSearchResult").empty();
+        $('#searchResultsPage').show();
+        $.get('/services/admin/GetOrderBasedOnOrderId/'+orderId, displayOrder);
+    }
+    $('#searchOrderByOrderId').click(searchByOrderId);
+
+    $(function(){
+        $('#orderSearchByConfirmCode').show();
+        $('#orderSearchByCustomerPhone').hide();
+        $('#orderSearchByCustomerName').hide();
+        $('#orderSearchByOrderId').hide();
+        $('#searchResultsPage').hide();
+
+
+    });
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+

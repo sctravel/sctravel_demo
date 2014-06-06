@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="cn">
+<head>
+    <%include layout/bootstrap.ejs%>
+    <%include layout/jqGridInclude.ejs%>
+</head>
+
+<body data-spy="scroll" data-target=".bs-docs-sidebar" data-twttr-rendered="true">
+
+<%include layout/navibar.ejs%>
+<script src="../sctravel/messageReporter.js"></script>
+
+<div class="container">
+
+    <div id = "orderSearch" class="container">
+
+        <div class="row-fluid order" >
+            <div  class="span2"><bold>请选择操作：</bold>
+                <select id="customerToolOrderSearchSelect" class="start" style="width:140px;">
+                    <option value = 0>根据确认码查询</option>
+                    <option value = 1>根据用户信息查询</option>
+                </select>
+            </div>
+        </div>
+        <div id="errorReporter"></div>
+        <section id="orderSearchByCustomerInfo">
+            <div class="page-header">
+                <b>请输入您的姓名和手机号码: </b>
+            </div>
+            <form  class="well form-inline">
+                <div class="row-fluid userInfo" >
+                    <div  class="span2"><bold>姓名：</bold><input id="name"  type="text" class="amount input-small" /></div>
+                    <div  class="span2"><bold>联系电话：</bold><input id="phone"  type="text" class="amount input-small" /></div>
+                </div>
+            </form>
+            <div class="row-fluid" >
+                <div ><button id="searchOrderByCustomerInfo">查询</button></div>
+            </div>
+
+        </section>
+        <section id="orderSearchByConfirmCode">
+            <div class="page-header">
+                <b>请输入您的确认码: </b>
+            </div>
+            <form  class="well form-inline">
+                <div class="row-fluid userInfo" >
+                    <div  class="span2"><bold>确认码：</bold><input id="confirmCode"  type="text" class="amount input-small" /></div>
+                </div>
+            </form>
+            <div class="row-fluid" >
+                <div ><button id="searchOrderByConfirmCode">查询</button></div>
+            </div>
+
+        </section>
+
+
+    </div>
+
+
+    <!-- Accordion gmap3 ================================================== -->
+    <section id="searchResultsPage">
+        <div class="page-header">
+            <h1>订单查询结果：</h1>
+        </div>
+        <div class="row-fluid order" >
+            <table id="orderSearchResult"></table>
+        </div>
+        <br />
+    </section>
+
+</div>
+
+<script>
+    searchResults = {};
+    var reporter = new MessageReporter("errorReporter");
+    var displayOrder = function(data){
+        searchResults=data;
+        console.dir(searchResults);
+        jQuery("#orderSearchResult").GridUnload();
+        jQuery("#orderSearchResult").jqGrid({
+            data: searchResults,
+            datatype: "local",
+            colNames:['出发地','景点','套餐名','日期','时间','人数','价格','支付状态'],
+            colModel:[
+                {name:'depart_spot_name',index:'depart_spot_name',align:'right',sortable:false,width:150},
+                {name:'to_label',index:'to_label', align:"right",sortable:false,width:150},
+                {name:'offer_name', index:'offer_name', align:"right" ,sortable:false,width:300},
+                {name:'valid_date',index:'valid_date', align:"right", formatter:dateDisplayFormatter},
+                {name:'departure_time',index:'departure_time', align:"right",sortable:false},
+                {name:'quantity',index:'quantity', align:"right",sortable:false},
+                {name:'offer_subtotal_amount',index:'offer_subtotal_amount', align:"right",sortable:false},
+                {name:'order_status',index:'order_status', align:"right",sortable:false,formatter:orderStatusFormatter}
+                //{name:'cancel_order',index:'order_status', edittype:"button", sortable:false,formatter:cancelOrderFormatter}
+
+            ],
+
+            caption: "您的订单：",
+            //rowNum:10,
+            //pager:$('#pager2'),
+            loadonce:false,
+            width:1200,
+            height: "100%"
+        });
+        //jQuery("#orderSearchResult").trigger('reloadGrid');
+        //jQuery(document).ready(function(){
+
+    };
+
+    $('#customerToolOrderSearchSelect').change(function(){
+        reporter.clear();
+        var selectedOption = $( this ).val();
+        $('#searchResultsPage').hide();
+
+        if(selectedOption == 0 ) { //query account
+            $('#orderSearchByConfirmCode').show();
+            $('#orderSearchByCustomerInfo').hide();
+
+        } else if(selectedOption == 1 ) { //adding new account
+            $('#orderSearchByConfirmCode').hide();
+            $('#orderSearchByCustomerInfo').show();
+
+        }
+    });
+
+    $('#searchOrderByCustomerInfo').click(function(){
+        reporter.clear();
+
+        console.log("Search orders by customer name and mobile phone");
+        var customerInfo={};
+        customerInfo.customerName = $('#name').val();
+        customerInfo.mobilePhone = $('#phone').val();
+        if(!customerInfo.customerName || customerInfo.customerName==0 || !customerInfo.mobilePhone || customerInfo.mobilePhone.length<10) {
+            reporter.errorStatus("用户名字不能为空，并且手机号码不能小于10位.");
+            reporter.render();
+            return;
+        }
+        jQuery("#orderSearchResult").empty();
+        $('#searchResultsPage').show();
+        $.get('/services/search/orders', {"customerInfo" : customerInfo},  displayOrder);
+
+
+    });
+
+
+    $('#searchOrderByConfirmCode').click(function(){
+        reporter.clear();
+
+        console.log("Search orders by confirmCOde");
+        var confirmCode = $('#confirmCode').val();
+        if(!confirmCode || confirmCode.length!=10) {
+            reporter.errorStatus("验证码必须为10位.");
+            reporter.render();
+            return;
+        }
+        jQuery("#orderSearchResult").empty();
+        $('#searchResultsPage').show();
+        $.get('/services/search/orders', {"confirmCode" : confirmCode}, displayOrder);
+
+
+    });
+
+    $(function(){
+        $('#orderSearchByConfirmCode').show();
+        $('#orderSearchByCustomerInfo').hide();
+        $('#searchResultsPage').hide();
+
+
+    });
+
+</script>

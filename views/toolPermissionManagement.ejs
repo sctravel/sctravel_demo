@@ -1,0 +1,206 @@
+<%include layout/jqGridInclude.ejs%>
+<script src="/sctravel/messageReporter.js" type="text/javascript"></script>
+
+<div class="container" >
+    <div id="toolManagementMessageReporter"></div>
+    <div >
+        <!-- Menu -->
+            <div id = "selectUser">
+                <form  class="well form-inline">
+                    <div class="row-fluid order" >
+                        <div  class="span2"><bold>用户名：</bold><select id="usernameSelect" class="start" style="width:140px;"></select></div>
+                    </div>
+                </form>
+                <div class="row-fluid" > <button id="searchPermission">查询权限</button></div>
+            </div>
+            <div id="toolPermissionResults">
+                </br>
+                 <table id="permissionList">
+                 </table>
+
+
+                <div class="row-fluid" >
+                  <button id="submitChange">提交</button>
+                </div>
+            </div>
+    </div>
+
+</div>
+
+<script>
+    var reporter = new MessageReporter("toolManagementMessageReporter");
+    //Hardcoded all the possible tools here
+    allTools=[{tool_id:1001, tool_name:"景点管理",has_permission:0},
+        {tool_id:2001, tool_name:"路线管理",has_permission:0},
+        {tool_id:3001, tool_name:"套餐管理",has_permission:0},
+        {tool_id:4001, tool_name:"车辆管理",has_permission:0},
+        {tool_id:5001, tool_name:"订单管理",has_permission:0}];
+
+    // We don't let people to have the following two permissions except the super user
+    //    {tool_id:1001, tool_name:"用户管理"},
+    //    {tool_id:1001, tool_name:"权限管理"}];
+
+    //This is the user who needs permission change
+    selectedUsername = $('#usernameSelect').val();
+    selectedUserPermissions=[];
+
+    var searchUserPermissions = function(){
+        reporter.clear();
+        selectedUsername = $('#usernameSelect').val();
+        if(selectedUsername == 0) {
+            console.warn("没有选择用户");
+            alert("请选择一个用户！");
+            return;
+        }
+        $('#toolPermissionResults').show();
+
+        $.get( "/services/admin/toolIdsByAdminUser/"+selectedUsername, function(data) {
+
+            selectedUserPermissions = data;
+
+            jQuery("#permissionList").jqGrid({
+                //url: "",
+                //datastr: data_show,
+                datatype: "local",
+                data: allTools,
+                colNames:['权限代码','权限名称', '有无权限'],
+                colModel:[
+                    {name:'tool_id',index:'tool_id', key:true, align:"center",editable: true,sortable:false,cellEdit:true},
+                    {name:'tool_name',index:'tool_name', align:"center",editable: true,sortable:false,cellEdit:true},
+                    {name: 'has_permission', index: 'has_permission',formatter: "checkbox",
+                        formatoptions:{disabled:false},
+                        editable:true, edittype:'checkbox', cellEdit:true, sortable:false,
+                        editoptions: { value: "1:0", defaultValue: 0 }  }
+                ],
+                caption: "用户"+selectedUsername+"的权限列表",
+                //rowNum:10,
+                //pager:$('#pager2'),
+                width: 770,
+                height: "100%"
+                //jsonReader: {repeatitems: true, id:"tool_id",root: function (obj) { return obj; }},
+            });
+
+            //Manually clear all the checkboxes
+            for(var i in allTools) {
+                $('#permissionList').jqGrid('setCell',allTools[i].tool_id,'has_permission',0)
+            }
+            //Display all the possible permissions,
+            // and check the permissions the user already have
+            for(var i in selectedUserPermissions) {
+                $('#permissionList').jqGrid('setCell',selectedUserPermissions[i].tool_id,'has_permission',1)
+            }
+            $('#submitChange').show();
+
+        });
+
+
+    };
+
+    $('#usernameSelect').change(function(){
+        reporter.clear();
+        $('#toolPermissionResults').hide();
+    })
+
+
+    $("#logout").click( function(){
+        window.location.href=("/logout");
+    });
+
+    $("#searchPermission").click(searchUserPermissions);
+
+    $("#submitChange").click( function(){
+        reporter.clear();
+        var permissionChanges = [];
+
+        if(selectedUsername == 0) {
+            console.warn("没有选择用户");
+            alert("请选择一个用户！");
+            return;
+        }
+
+        var dataIds = $('#permissionList').getDataIDs();
+        if(dataIds.length!=allTools.length) {
+            console.warn("请先查询用户权限。");
+            alert("请先查询用户权限。");
+            return;
+        }
+        var finalPermissions = {};
+
+        for(var i in dataIds) {
+            var value = $('#permissionList').jqGrid('getCell',dataIds[i],'has_permission');
+            var tool_name = $('#permissionList').jqGrid('getCell',dataIds[i],'tool_name');
+
+            if(value == 1) {
+                finalPermissions[dataIds[i]]= value;
+            }
+        }
+        //Need to check finalPermission contains the same ids as userPermissions or not
+        // if the finalPermissions contains different ids from userPermissions
+        // submit request to change permissions;
+        // otherwise, report a warning that no permission has been changed
+        for(var i in allTools) {
+            var tool_id = allTools[i].tool_id;
+            var hasPermissionBefore = false;
+            var hasPermissionNow = false;
+            for(var j in selectedUserPermissions) {
+                if(selectedUserPermissions[j].tool_id == tool_id)
+                    hasPermissionBefore=true;
+            }
+            if(finalPermissions[tool_id] == 1) {
+                hasPermissionNow = true;
+            }
+            if(hasPermissionBefore==true && hasPermissionNow==false) {
+                permissionChanges.push({type:'remove',tool_id:tool_id});
+            } else if (hasPermissionBefore==false && hasPermissionNow==true) {
+                permissionChanges.push({type:'add',tool_id:tool_id});
+            }
+        }
+        console.dir(permissionChanges);
+        if(permissionChanges.length==0) {
+            alert("no permission has been changed! Please double check");
+            return;
+        }
+        $.post("/services/admin/editPermissions", {permissionChanges:permissionChanges, selectedUsername:selectedUsername},function(data){
+            if(data=="done") {
+                searchUserPermissions();
+                reporter.successStatus("您已经成功修改了用户"+selectedUsername+"的权限.");
+                reporter.render();
+                $('#toolPermissionResults').hide();
+            } else {
+                reporter.errorStatus("修改用户权限出现错误。请重试或者联系管理员.");
+                reporter.render();
+                //TODO deal with the edit failed case
+            }
+        })
+
+    });
+
+    var loadAdminUsers = function() {
+        $.get( "/services/admin/allAdminUsers", function(data) {
+            console.log(data);
+            var adminUsers = data;
+
+            var option = "<option value =  0>" +  "请选择" + "</option>";
+            $(option).appendTo($('#usernameSelect'));
+
+            for(var i in adminUsers) {
+
+                var  adminUser = adminUsers[i];
+
+                var option = "<option value = "  +  adminUser.username + ">" +  adminUser.username  + "</option>"
+
+                $(option).appendTo($('#usernameSelect'));
+            }
+        });
+    }
+
+    $(function(){
+
+        $('#toolPermissionResults').hide();
+        loadAdminUsers();
+
+
+    })
+
+
+</script>

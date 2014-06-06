@@ -1,0 +1,66 @@
+<head>
+    <%include layout/bootstrap.ejs%>
+</head>
+<div class="container" id="buyTicketContainer">
+    <div class="page-header">
+        <h1>购票</h1>
+    </div>
+    <div id="adminOrderReporter">
+    </div>
+    <div >
+        <form id="buyTicketFrom" class="well form-inline">
+            <div id = "buyTicket">
+                <div class="row-fluid order">
+                    <div  class="span2"><bold>出发地：</bold><select id="start_1" class="start" style="width:100px" ></select></div>
+                    <div  class="span2"><bold>景点：</bold><select id="end_1" class="end input-small" style="width:140px"></select></div>
+                    <div  class="span2"><bold>票种：</bold><select id="type_1" class="type input-small" style="width:140px"></select></div>
+                    <div  class="span2"><bold>日期：</bold><input id ="date_1" class="datepicker input-small" type="text" style="width:100px"/></div>
+                    <div  class="span2"><bold>时间：</bold><select id = "time_1" class="time input-small" style="width:80px"></select></div>
+                    <div  class="span1"><bold>人数：</bold><input id= "amount_1" type="text" class="amount input-small" style="width:30px" value="1" /></div>
+                    <div  class="span1"><bold>单价：</bold><input  id = "price_1"  class="price input-small" type="text" readonly value="" style="width:30px"/></div>
+                    <div  class="span1"><bold>总价：</bold><input  id = "subtotal_1"  class="subtotal input-small" type="text" readonly value=0 style="width:30px"/></div>
+                </div>
+            </div>
+            <div class="row-fluid order" >
+                <div ><bold> 合计： </bold><input  id = "total"  class="total input-small" type="text" readonly value=0 style="width:50px"/></div>
+            </div>
+        </form>
+    </div>
+    <div class="row-fluid" > <button id="addButton">添加</button>  <button id="resetButton">重设</button></div>
+
+    <form  class="well form-inline">
+        <div class="row-fluid userInfo" >
+            <input type = "hidden" id = "verify" value=" 0" />
+            <div class="span2"><bold>姓名：</bold><input id="name"  type="text"  /></div>
+            <div class="span2"><bold>联系电话：</bold><input id="phone"  type="text" /></div>
+            <div class="span2"><bold>Email：</bold><input  id="email" type="text" /></div>
+        </div>
+    </form>
+
+    <button id="adminBuyButton">订购</button>
+</div>
+
+<script src="/assets/js/jquery-1.9.1.min.js"></script>
+<script src="/assets/js/bootstrap.min.js"></script>
+<script src="/assets/js/holder.js"></script>
+<script src="/assets/js/jquery-ui-1.10.3.custom.min.js"></script>
+<script src="/assets/js/google-code-prettify/prettify.js"></script>
+<script src="/assets/js/docs.js"></script>
+
+<script src="/sctravel/messageReporter.js"></script>
+<script src="/sctravel/calmap.js"></script>
+
+<script>
+
+    /***
+     * Customize the validation process and warning style for the buyTicket form
+     * @xitu
+     * @returns {boolean}
+     */
+
+
+
+
+
+
+</script>

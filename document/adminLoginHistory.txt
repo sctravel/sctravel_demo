@@ -1,0 +1,4 @@
+We use an adminLoginHistory table to store the history of each admin login
+
+When someone successfully log in, system will generate an 6 digit random number associate with this login
+as a secret key, every operation this user does need to get this key and match it.
