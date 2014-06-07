@@ -964,7 +964,7 @@ a:hover{color: #333;}
 	background: url("../images/content_main1_r_input1_bg.jpg") no-repeat; border: 1px solid rgb(212, 212, 212); border-image: none; width: 229px; height: 28px; color:#222222; line-height: 28px; padding-left: 10px;  margin-left: 5px;
 }
 .content_main1_r_btn1 {
-	background: url("../images/content_main1_btn1.png") no-repeat left -31px; width: 242px; height: 31px; margin-left: 63px; display: inline-block; cursor: pointer;border:none;
+	background: url("/upload/images/Product/content_main1_btn1.png") no-repeat left -31px; width: 242px; height: 31px; margin-left: 63px; display: inline-block; cursor: pointer;border:none;
 }
 .content_main1_r_btn2 {
 	background: url("../images/content_main1_btn1.jpg") no-repeat; width: 242px; height: 31px; margin-left: 63px; display: inline-block; cursor: pointer;
@@ -1005,7 +1005,7 @@ a:hover{color: #333;}
 	background: url("../images/home_banner_bg2.png") repeat-x; color: rgb(255, 255, 255);
 }
 .content_main_jq {
-	height: 515px; overflow: hidden;
+	 overflow: hidden;
 }
 .content_mian_jq_img1 {
 	width: 200px; overflow: hidden; float: left;
@@ -1086,7 +1086,7 @@ a:hover{color: #333;}
 	height: 475px; overflow: hidden;
 }
 .cotnent_main_tp_box2 {
-	height: 475px; overflow: hidden;
+	 overflow: hidden;
 }
 .content_main_jq_bd0 {
 	width: 724px; float: left;
@@ -1245,16 +1245,16 @@ a:hover{color: #333;}
 	background-position: right -80px; color: rgb(34, 173, 230);
 }
 .content_main_jq_box0_more1 {
-	line-height: 36px; padding-right: 10px; font-family: ËÎÌå; float: right;
+	line-height: 36px; padding-right: 10px; font-family: ï¿½ï¿½ï¿½ï¿½; float: right;
 }
 .content_main_jq_box1_more1 {
-	line-height: 36px; padding-right: 10px; font-family: ËÎÌå; float: right;
+	line-height: 36px; padding-right: 10px; font-family: ï¿½ï¿½ï¿½ï¿½; float: right;
 }
 .content_main_jd_box1_more1 {
-	line-height: 36px; padding-right: 10px; font-family: ËÎÌå; float: right;
+	line-height: 36px; padding-right: 10px; font-family: ï¿½ï¿½ï¿½ï¿½; float: right;
 }
 .content_main_tp_box1_more1 {
-	line-height: 36px; padding-right: 10px; font-family: ËÎÌå; float: right;
+	line-height: 36px; padding-right: 10px; font-family: ï¿½ï¿½ï¿½ï¿½; float: right;
 }
 .content_main_jq_box0_more1 a {
 	color: #27891C;
@@ -1338,8 +1338,8 @@ a:hover{color: #333;}
 .cotent_main_tp_box2_1 ul li a.link_box h5 {
 	height: 20px; line-height: 22px; overflow: hidden; padding-top: 2px;  font-size: 14px;
 }
-.cotent_main_jq1_box2_1 ul li a.link_box .price font£¬
-.cotent_main_jd1_box2_1 ul li a.link_box .price font£¬
+.cotent_main_jq1_box2_1 ul li a.link_box .price fontï¿½ï¿½
+.cotent_main_jd1_box2_1 ul li a.link_box .price fontï¿½ï¿½
 .cotent_main_tp_box2_1 ul li a.link_box .price font {
 	font-size: 14px;
 }
@@ -1366,7 +1366,7 @@ a:hover{color: #333;}
 	color: rgb(51, 51, 51); line-height: 36px; padding-left: 10px; font-size: 18px; font-weight: normal; float: left;
 }
 .content_main_jq_hot_tit_more1 {
-	line-height: 36px; padding-right: 10px; font-family: ËÎÌå; font-size: 12px; float: right;
+	line-height: 36px; padding-right: 10px; font-family: ï¿½ï¿½ï¿½ï¿½; font-size: 12px; float: right;
 }
 .content_main_jq_hot ul.content_main_jq_hot_list1 {
 	padding-top: 6px; padding-right: 10px; padding-left: 10px;
@@ -1417,7 +1417,7 @@ a:hover{color: #333;}
 	height: 215px; overflow: hidden; padding-top: 15px;
 }
 .content_main_xsqg ul li a.msgg_link_box {
-	background: rgb(255, 255, 255); border: 1px solid rgb(221, 221, 221); border-image: none; width: 228px; height: 213px; color: rgb(136, 136, 136); overflow: hidden; font-family: ËÎÌå; display: inline-block;
+	background: rgb(255, 255, 255); border: 1px solid rgb(221, 221, 221); border-image: none; width: 228px; height: 213px; color: rgb(136, 136, 136); overflow: hidden; font-family: ï¿½ï¿½ï¿½ï¿½; display: inline-block;
 }
 .content_main_xsqg ul li a.msgg_link_box img.xsqg_img {
 	padding: 9px 9px 3px;
@@ -1950,10 +1950,10 @@ a:hover{color: #333;}
 	background: url("../images/view_tbtj_ck.jpg") no-repeat left -24px; border: 0px transparent; border-image: none; width: 65px; height: 26px; text-align: center; color: rgb(255, 255, 255); line-height: 26px; margin-top: 8px; float: right; cursor: pointer;
 }
 .view_content_main_hot_list1 {
-	width: 268px; padding-bottom: 10px; font-family: ËÎÌå;
+	width: 268px; padding-bottom: 10px; font-family: ï¿½ï¿½ï¿½ï¿½;
 }
 .view_content_main_hot_list2 {
-	width: 268px; padding-bottom: 10px; font-family: ËÎÌå;
+	width: 268px; padding-bottom: 10px; font-family: ï¿½ï¿½ï¿½ï¿½;
 }
 .view_content_main_hot_list1 ul {
 	margin: 0px auto; width: 238px;
@@ -2277,7 +2277,7 @@ a:hover{color: #333;}
 	text-align: center; clear: both;
 }
 div.sabrosus {
-	height: 34px; font-family: ËÎÌå; display: inline-block;
+	height: 34px; font-family: ï¿½ï¿½ï¿½ï¿½; display: inline-block;
 }
 .page {
 	text-align: center; overflow: hidden; clear: both; font-size: 12px;
@@ -2779,13 +2779,13 @@ tg_content_tj_l_icon2_2 {
 	width: 135px; color: rgb(102, 102, 102); line-height: 18px; padding-top: 3px; padding-left: 10px;
 }
 .content_main_lsqk_box_dt_tit {
-	color: rgb(102, 102, 102); font-family: ËÎÌå;
+	color: rgb(102, 102, 102); font-family: ï¿½ï¿½ï¿½ï¿½;
 }
 .content_main_lsqk_box_dt_money {
 	color: rgb(221, 19, 123); padding-top: 5px;  font-size: 16px;
 }
 .content_close {
-	background: url("../images/content_main_close.jpg") no-repeat right; padding-right: 14px; font-family: ËÎÌå; margin-top: 10px; margin-right: 15px; float: right;
+	background: url("../images/content_main_close.jpg") no-repeat right; padding-right: 14px; font-family: ï¿½ï¿½ï¿½ï¿½; margin-top: 10px; margin-right: 15px; float: right;
 }
 .content_close a {
 	color: rgb(0, 119, 204);
@@ -4145,7 +4145,7 @@ p#back-to-top a{
       color:#d1d1d1;
       display:block;
       width:90px;
-      /*Ê¹ÓÃCSS3ÖÐµÄtransitionÊôÐÔ¸øÌø×ªÁ´½ÓÖÐµÄÎÄ×ÖÌí¼Ó½¥±äÐ§¹û*/
+      /*Ê¹ï¿½ï¿½CSS3ï¿½Ðµï¿½transitionï¿½ï¿½ï¿½Ô¸ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½*/
       -moz-transition:color 1s;
       -webkit-transition:color 1s;
       -o-transition:color 1s;
@@ -4160,7 +4160,7 @@ p#back-to-top a span{
       height:90px;
       width:90px;
       margin-bottom:5px;
-      /*Ê¹ÓÃCSS3ÖÐµÄtransitionÊôÐÔ¸ø<span>±êÇ©±³¾°ÑÕÉ«Ìí¼Ó½¥±äÐ§¹û*/
+      /*Ê¹ï¿½ï¿½CSS3ï¿½Ðµï¿½transitionï¿½ï¿½ï¿½Ô¸ï¿½<span>ï¿½ï¿½Ç©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½Ó½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½*/
       -moz-transition:background 1s;
       -webkit-transition:background 1s;
       -o-transition:background 1s;
